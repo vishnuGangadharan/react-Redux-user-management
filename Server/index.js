@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import userRouter from './routes/userRoutes.js'
 import authRouter from './routes/authRouter.js'
+import cookieParser from 'cookie-parser';
+import adminRoute from './routes/admin/authRouter.js'
 
 dotenv.config()
 mongoose.connect(process.env.mongo).then(()=>{
@@ -16,13 +18,17 @@ const app = express()
 //to recive json data
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
+
+app.use(cookieParser());
+
 app.listen(3000,()=>{
-    console.log('server running on 3000assaa');
+    console.log('server running on 3000');
 })
 
 
 app.use('/api/user',userRouter);
 app.use('/api/auth',authRouter)
+app.use('/api/adminAuth',adminRoute)
 
 app.use((err,req,res,next)=>{
     const statusCode = err.statusCode || 500;

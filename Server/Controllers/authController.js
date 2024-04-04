@@ -2,6 +2,9 @@ import User from "../Model/user.js";
 import bcryptjs from 'bcryptjs'
 import { errorHandler } from "../utils/error.js";
 import jwt  from "jsonwebtoken";
+import multer from 'multer';
+const storage = multer.memoryStorage();
+
 
 export const signup = async(req,res,next) =>{
 
@@ -43,4 +46,58 @@ export const signin = async(req,res,next)=>{
         next(error)
         console.log(error);
     }
+}
+
+
+const upload = multer({ storage: storage }).single('image'); 
+
+export const updateProfile = async(req,res,next)=>{
+    if(req.user.id !== req.params.id){
+        return next(errorHandler(401, 'You can only update your account'))
+    }
+    if(req.body.password){
+        req.body.password =  bcryptjs.hashSync(req.body.password, 10)
+    }
+
+    upload(req, res, async (err) => {
+        if (err) {
+            console.error(err);
+            return next(errorHandler(400, 'Error uploading file'));
+        }
+        
+        const { email, username, password } = req.body;
+        
+        console.log('params', req.params.id);
+        try {
+            console.log('here');
+            console.log(req.body);
+           
+            const user = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set:{
+                        userName:req.body.username,
+                        email:req.body.email,
+                        password: req.body.password,
+                        phone:req.body.phone,
+                        ...(req.file && { profilePicture: req.file.buffer })
+                    }
+                },
+                { new: true }
+                
+            );
+
+            console.log('User updated:', user);
+            const {password,...rest} = user._doc;
+            res.status(200).json(rest);
+        } catch(error) {
+            console.error(error);
+            next(error);
+        }
+    });
+}
+
+
+export const signout=async( req,res,next) =>{
+   res.clearCookie('access_token').status(200).json('Signout success')
 }
