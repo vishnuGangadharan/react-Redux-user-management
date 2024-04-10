@@ -5,9 +5,10 @@ import { useSelector } from 'react-redux';
 
 function Home() {
   const { loading,currentUser, error} = useSelector((state) => state.user)
-  console.log("home",currentUser);
   return (
-    <div>Home</div>
+    <div classNames="flex justify-center items-center h-screen">
+  <h1 className="text-4xl font-bold text-center">WELCOME: {currentUser.userName}</h1>
+</div>
   )
 }
 

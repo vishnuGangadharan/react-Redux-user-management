@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateUserStart, updateUserSuccess, updateUserFailure } from '../../redux/user/userSlice';
-import { deleteUserStart, deleteUserSuccess, deleteUserFailure ,signOut} from '../../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -13,21 +12,18 @@ function Edit() {
 const {id} = useParams()
 console.log(id);
 const [image, setImage] = useState(undefined)
-  const {currentUser} = useSelector((state)=> state.user)
+  const {currentAdmin} = useSelector((state)=> state.admin)
   const [ user,setUsers] =useState({
     userName: '',
     phone:'',
     password:'',
-    email:''
+    email:'',
+    profilePicture: ''
   })
-  console.log(currentUser);
+  // console.log("currentuser",currentAdmin);
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [dataForm, setDataForm] = useState({
-    // username: currentUser.userName,
-    // email: currentUser.email,
-    // phone: currentUser.phone,
-  });
+  const [dataForm, setDataForm] = useState({ });
   
 const imageRef = useRef(null)
 
@@ -35,7 +31,7 @@ const imageRef = useRef(null)
     const handleChange=(e)=>{
       setDataForm({...dataForm,[e.target.id]:e.target.value})
     }
-console.log('form',dataForm);
+
 useEffect(()=>{
     fetch(`/api/adminAuth/userDetails/${id}`)
     .then(response => {
@@ -53,7 +49,7 @@ useEffect(()=>{
     })
 },[id])
 
-console.log("my",user);
+// console.log("my",user);
 
 useEffect(()=>{
   if(image){
@@ -62,9 +58,7 @@ useEffect(()=>{
   }
 },[image])
 
-// const handleImageUpload= async( image)=>{
-//   console.log('image',image);
-// }
+
 
     const handleSubmit = async(e)=>{
       e.preventDefault()
@@ -73,9 +67,15 @@ useEffect(()=>{
       if(image){
        formData.append('image', image);
       }
+      if (dataForm.username) {
       formData.append('username', dataForm.username);
+      }
+      if (dataForm.email) {
       formData.append('email',dataForm.email)
-      formData.append('phone',dataForm.phone)
+      }
+      if (dataForm.phone) {
+        formData.append('phone', dataForm.phone);
+      }
       console.log('herrrrr');
         console.log('formdata',formData);
       try{
@@ -90,39 +90,18 @@ useEffect(()=>{
         return
       }
       dispatch(updateUserSuccess(data))
+      navigate('/admin-home')
+      alert('success')
     }catch(error){
       dispatch(updateUserFailure(error))
       console.log(error);
     }
   }
   
-const handleDeleteAc=async()=>{
-  try {
-    dispatch(deleteUserStart())
-    const res = await fetch(`api/user/delete/${currentUser._id}`,{
-      method :'DELETE',
-    })
-    const data = await res.json()
-    if(data.success === false){
-      dispatch(deleteUserFailure(data))
-      return
-    }
-    dispatch(deleteUserSuccess(data))
-    navigate('/sign-in')
-  } catch (error) {
-    dispatch(deleteUserFailure(error))
-  }
-}
 
 
-const handleSignout= async()=>{
-  try {
-    await fetch('api/auth/signout')
-    dispatch(signOut())
-  } catch (error) {
-    console.log(error);
-  }
-}
+
+
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
@@ -133,7 +112,7 @@ const handleSignout= async()=>{
         onChange={(e)=>setImage(e.target.files[0])}
         />
 
-        <img src={user.profilePicture} alt="profile pic" id='upload' name='profile'
+        <img src={`/api/static/uploads/${user.profilePicture}`} alt="profile pic" id='upload' name='profile'
         className='h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2'
         onClick={()=>imageRef.current.click()}
         onChange={handleChange}
@@ -154,10 +133,7 @@ const handleSignout= async()=>{
         <button className='bg-slate-700 text-white p-3 rounded-lg 
         uppercase hover:opacity-95 disabled:opacity-80 '>Update</button>
       </form>
-      <div className='flex justify-between mt-5'>
-        <span onClick={handleDeleteAc} className='text-red-700 cursor-pointer'>Delete Account</span>
-        <span onClick={handleSignout} className='text-red-700 cursor-pointer'>Sign out</span>
-      </div>
+     
     </div>
 
   )

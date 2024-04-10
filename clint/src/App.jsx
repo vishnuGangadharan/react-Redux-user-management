@@ -9,24 +9,43 @@ import PrivetRoute from "./Components/PrivetRoute"
 import Login from "./admin/Pages/Login"
 import HomeAdmin from "./admin/Pages/HomeAdmin"
 import Edit from "./admin/Pages/Edit"
+import { useSelector } from "react-redux"
+
 
 function App() {
+  const isAdminRoute = window.location.pathname.startsWith("/admin");
 
+  const userCheck =() => {
+    const {currentUser} = useSelector((state)=> state.user)
+    const userLogged = !!currentUser
+    return userLogged
+  }
+  
+  const adminCheck = () => {
+    const { currentAdmin } = useSelector((state) => state.admin);
+    const adminLogin = !!currentAdmin;
+    return adminLogin;
+  };
+  const isAdminLoggedIn = adminCheck();
+  const userLog = userCheck()
+  // console.log(isAdminLoggedIn);
+  // console.log(userLog);
   return (
     <>
    
     <BrowserRouter>
-    <Header/>
+    {!isAdminRoute && <Header />}
+
     <Routes>
       <Route path="/" element={<Home/>}/>
-      <Route path="/sign-up" element={<Signup/>}/>
-      <Route path="/sign-in" element={<Signin/>}/>
+      <Route path="/sign-up" element={userLog? <Home/> :<Signup/>}/>
+      <Route path="/sign-in" element={userLog? <Home/> : <Signin/>}/>
       <Route element={<PrivetRoute />} >
-      <Route path="/profile" element={<Profile/>}/>
+      <Route path="/profile" element={!userLog? <Signin/> :<Profile/>}/>
       </Route>
-      <Route path="/admin-login" element={<Login/>} />
-      <Route path="/admin-home" element={<HomeAdmin/>} />
-      <Route path="/admin-edit/:id" element={<Edit/>} />
+      <Route path="/admin-login" element={isAdminLoggedIn? <HomeAdmin/>: <Login/>} />
+      <Route path="/admin-home" element={isAdminLoggedIn? <HomeAdmin/> : <Login/>} />
+      <Route path="/admin-edit/:id" element={isAdminLoggedIn?<Edit/> : <Login/>} />
     </Routes>
     </BrowserRouter>
 

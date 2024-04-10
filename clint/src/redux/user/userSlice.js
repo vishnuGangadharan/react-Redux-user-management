@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     currentUser: null,
     loading : false,
-    error : false
+    error: null,
+    signInError: null,
+    signUpError: null,
 }
 
 const userSlice = createSlice({
@@ -11,16 +13,16 @@ const userSlice = createSlice({
     reducers :{
         signInStart: (state) =>{
             state.loading = true
+            state.signInError = null
         },
-        signInSuccess: (state,action) =>{
-     
+        signInSuccess: (state,action) =>{ 
             state.currentUser = action.payload;
             state.loading = false;
-            state.error = false
+            state.signInError = null
         },
         signInFailure: (state,action) =>{
             state.loading = false;
-            state.error = action.payload;
+            state.signInError = action.payload;
         },
         updateUserStart:(state)=>{
             state.loading = true;
@@ -28,7 +30,7 @@ const userSlice = createSlice({
         updateUserSuccess:(state,action) =>{
            state.currentUser = action.payload;
            state.loading = false;
-           state.error = false
+           state.error = null
         },
         updateUserFailure: (state,action) =>{
             state.loading = false;
@@ -40,7 +42,7 @@ const userSlice = createSlice({
         deleteUserSuccess:(state) =>{
            state.currentUser = null;
            state.loading = false;
-           state.error = false
+           state.error = null
         },
         deleteUserFailure: (state,action) =>{
             state.loading = false;
@@ -49,7 +51,20 @@ const userSlice = createSlice({
         signOut: (state)=>{
             state.currentUser = null,
             state.loading = false,
-            state.error = false
+            state.error = null
+        },
+        signUpStart: (state) => {
+            state.loading = true;
+            state.signUpError = null
+        },
+        signUpSuccess: (state, action) => {
+            state.currentUser = action.payload;
+            state.loading = false;
+            state.signUpError = null;
+        },
+        signUpFailure: (state, action) => {
+            state.loading = false;
+            state.signUpError = action.payload;
         }
     }
 })
@@ -58,7 +73,8 @@ export const {
     signInStart, signInSuccess ,signInFailure,
      updateUserFailure,updateUserSuccess, updateUserStart,
     deleteUserStart, deleteUserSuccess, deleteUserFailure,
-    signOut
+    signOut,
+    signUpStart,signUpSuccess,signUpFailure
 } = userSlice.actions;
 
 export default userSlice.reducer;

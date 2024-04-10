@@ -1,23 +1,25 @@
 import React, { useState } from 'react'
 import {Link , useNavigate} from 'react-router-dom'
-
+import { signUpStart, signUpSuccess,signUpFailure } from '../../redux/user/userSlice'
+import { useDispatch,useSelector } from 'react-redux'
 
 
 function Signup() {
 
 const [formData,setFormData] = useState({})
-const [error,setError] = useState(false)
-const [loading,setLoading] = useState(false)
+const { loading , signUpError} = useSelector((state)=> state.user)
+
+const dispatch = useDispatch()
 const navigate = useNavigate()
   const handleFormChange=(e)=>{
     setFormData({...formData,[e.target.id]: e.target.value})
   }
-  console.log("formData",formData);
+  //console.log("formData",formData);
+
 const handleSubmit = async(e)=>{
   e.preventDefault()
   try {
-    setLoading(true)
-    setError(false)
+   dispatch(signUpStart())
     const res = await fetch('/api/auth/signup',{
       method:'POST',
       headers:{
@@ -25,17 +27,16 @@ const handleSubmit = async(e)=>{
       },
       body: JSON.stringify(formData)
     })
+    //console.log(res);
     const data = await res.json()
-    console.log(data);
-    setLoading(false)
     if(data.success === false){
-      setError(true)
+      dispatch(signUpFailure(data.message))
       return;
     }
+    dispatch(signUpSuccess(data))
     navigate('/sign-in')
   } catch (error) {
-    setLoading(false)
-    setError(true)
+   dispatch(signUpFailure(error))
     console.log(error);
   }
 
@@ -81,7 +82,7 @@ const handleSubmit = async(e)=>{
         <span className='text-blue-500'>Log in</span>
         </Link>
       </div>
-      <p className='text-red-500 mt-5'>{error && 'Something wrong !'}</p>
+      <p className='text-red-500 mt-5'>{signUpError ? signUpError ||'Something wrong !' : ''}</p>
     </div>
   )
 }

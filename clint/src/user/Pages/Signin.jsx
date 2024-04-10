@@ -7,7 +7,7 @@ import { signInStart, signInSuccess ,signInFailure } from '../../redux/user/user
 function Signin() {
 
 const [formData,setFormData] = useState({})
-const { loading , error} = useSelector((state)=> state.user)
+const { loading , signInError} = useSelector((state)=> state.user)
 const navigate = useNavigate()
 const dispach = useDispatch()
   const handleFormChange=(e)=>{
@@ -26,8 +26,8 @@ const handleSubmit = async(e)=>{
       body: JSON.stringify(formData)
     })
     const data = await res.json()
-    // console.log(data);
-    dispach(signInSuccess(data))
+    console.log(data);
+   
     if(data.success === false){
       dispach(signInFailure(data))
       return;
@@ -70,7 +70,7 @@ const handleSubmit = async(e)=>{
         <span className='text-blue-500'>Sign Up</span>
         </Link>
       </div>
-      <p className='text-red-500 mt-5'>{error ? error.message ||'Something wrong !' : ''}</p>
+      <p className='text-red-500 mt-5'>{signInError ? signInError.message ||'Something wrong !' : ''}</p>
     </div>
   )
 }

@@ -13,11 +13,11 @@ function Header() {
                  <li>Home</li> 
                 </Link>
                 <Link to='/sign-up'>
-                <li>SignUp</li>
+                <li>{currentUser ? "" :"SignUp"}</li>
                 </Link>
                 <Link to='/profile'>
                   { currentUser ? (
-                    <img src={currentUser.profilePicture} alt="pic" className='h-7 w-7 rounded-full object-cover'/>
+                    <img src={`/api/static/uploads/${currentUser.profilePicture}`} alt="pic" className='h-7 w-7 rounded-full object-cover'/>
                   ):(
                     
                     <li>Login</li>

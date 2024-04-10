@@ -10,16 +10,18 @@ import { useNavigate } from 'react-router-dom';
 function Profile() {
   const [image, setImage] = useState(undefined)
   const {currentUser} = useSelector((state)=> state.user)
+ // console.log('current',currentUser);
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [dataForm, setDataForm] = useState({
     username: currentUser.userName,
     email: currentUser.email,
     phone: currentUser.phone,
+    password: currentUser.password,
   });
   
 const imageRef = useRef(null)
-    console.log('hi',currentUser);
+    
     const handleChange=(e)=>{
       setDataForm({...dataForm,[e.target.id]:e.target.value})
     }
@@ -31,9 +33,7 @@ useEffect(()=>{
   }
 },[image])
 
-// const handleImageUpload= async( image)=>{
-//   console.log('image',image);
-// }
+
 
     const handleSubmit = async(e)=>{
       e.preventDefault()
@@ -45,6 +45,7 @@ useEffect(()=>{
       formData.append('username', dataForm.username);
       formData.append('email',dataForm.email)
       formData.append('phone',dataForm.phone)
+      formData.append('password',dataForm.password)
       
         
       try{
@@ -59,6 +60,7 @@ useEffect(()=>{
         return
       }
       dispatch(updateUserSuccess(data))
+
     }catch(error){
       dispatch(updateUserFailure(error))
       console.log(error);
@@ -71,6 +73,7 @@ const handleDeleteAc=async()=>{
       method :'DELETE',
     })
     const data = await res.json()
+    console.log('data',data);
     if(data.success === false){
       dispatch(deleteUserFailure(data))
       return
@@ -100,7 +103,7 @@ const handleSignout= async()=>{
         onChange={(e)=>setImage(e.target.files[0])}
         />
 
-        <img src={currentUser.profilePicture} alt="profile pic" id='upload' name='profile'
+        <img src={`/api/static/uploads/${currentUser.profilePicture}`} alt="profile pic" id='upload' name='profile'
         className='h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2'
         onClick={()=>imageRef.current.click()}
         onChange={handleChange}
@@ -113,14 +116,15 @@ const handleSignout= async()=>{
         placeholder='email' className='bg-slate-100 rounded-lg p-3'
         onChange={handleChange}
         />
-        <input defaultValue={currentUser.phone} type="number" id='phone' 
+        <input defaultValue={currentUser.phone} type="text" id='phone' 
         placeholder='phone' className='bg-slate-100 rounded-lg p-3'
         onChange={handleChange}
         />
-        <input type="password" id='password' 
-        placeholder='password' className='bg-slate-100 rounded-lg p-3'
+        <input  type="password" id='password' 
+        placeholder='enter new password' className='bg-slate-100 rounded-lg p-3'
         onChange={handleChange}
         />
+    
         <button className='bg-slate-700 text-white p-3 rounded-lg 
         uppercase hover:opacity-95 disabled:opacity-80 '>Update</button>
       </form>

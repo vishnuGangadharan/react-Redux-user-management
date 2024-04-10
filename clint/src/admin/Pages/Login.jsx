@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 // import { UseDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { signInStart,signInSuccess,signInFailure } from '../../redux/admin/adminSlice'
+import { useDispatch ,useSelector} from 'react-redux'
+
 function Login() {
+    const dispatch = useDispatch()
+    const {error} = useSelector((state)=>state.admin)
+    // console.log('qqqqqqqqqq',error);
     const [formData, setFormData] = useState({})
     const navigate = useNavigate()
     const handleChange = (e)=>{
@@ -11,6 +17,7 @@ function Login() {
     const handleSubmit =async(e)=>{
         e.preventDefault()
         try {
+            dispatch(signInStart())
             const res = await fetch('/api/adminAuth/admin-signin',{
                 method:'POST',
                 headers:{
@@ -19,13 +26,17 @@ function Login() {
                 body:JSON.stringify(formData)
             })
             const data = await res.json()
+            console.log('ssssssssss',data.message);
             if(data.success=== false){
                 console.log('failed to add');
+                dispatch(signInFailure(data))
                 return
             }
+            dispatch(signInSuccess(data))
             navigate('/admin-home')
         } catch (error) {
-            console.log(error);
+            dispatch(signInFailure(data)) 
+            console.log("mmmmmmm",error);
         }
     }
 
@@ -46,7 +57,7 @@ function Login() {
             uppercase hover:opacity-95 disabled:opacity-80
             '>Sign In</button>
         </form> 
-        {/* <p className='text-red-500 mt-5'>{error && 'Something wrong !'}</p> */}
+        <p className='text-red-500 mt-5'>{error ? error.message || 'Something wrong !' : ''}</p>
     </div>
   )
 }
