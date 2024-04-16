@@ -4,6 +4,7 @@ import {  useSelector,useDispatch } from 'react-redux'
 import { signOut } from '../../redux/admin/adminSlice';
 function HomeAdmin() {
   const [errorSearch, setErrorSearch] = useState(null);
+ 
   const {currentAdmin} = useSelector((state)=>state.admin)
   const [formData,setFormData] = useState({})
   const [users, setUsers] = useState([]);
@@ -83,6 +84,10 @@ const handleSignout =async()=>{
   }
 }
 
+const createUser =()=>{
+  navigate('/admin-createUser')
+}
+
   return (
     <div  className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -93,6 +98,8 @@ const handleSignout =async()=>{
         <button onClick={search} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">search</button>
         </div>
         <span onClick={handleSignout} className='text-red-700 cursor-pointer'>Sign out</span>
+        <button onClick={createUser} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">create</button>
+
         </div>
         {errorSearch && <p className="text-red-500">{error}</p>}
         <table className="table-auto w-full">
@@ -106,7 +113,17 @@ const handleSignout =async()=>{
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
+            
+            {users.length === 0 ?
+             (
+            <tr>
+            
+            <td colSpan="5" className="border px-4 py-2 text-center">No users found</td>
+            
+          </tr>
+          
+            ) : (
+            users.map(user => (
               <tr key={user._id}>
                 <td className="border px-4 py-2">{user.userName}</td>
                 <td className="border px-4 py-2">{user.email}</td>
@@ -118,7 +135,8 @@ const handleSignout =async()=>{
                   <button onClick={()=>handleDelete(user._id)} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Delete</button>
                 </td>
               </tr>
-            ))}
+            ))
+           ) }
           </tbody>
         </table>
       </div>

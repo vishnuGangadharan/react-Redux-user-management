@@ -60,7 +60,7 @@ useEffect(()=>{
         return
       }
       dispatch(updateUserSuccess(data))
-
+      alert('update success')
     }catch(error){
       dispatch(updateUserFailure(error))
       console.log(error);

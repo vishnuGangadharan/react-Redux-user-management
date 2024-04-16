@@ -10,6 +10,10 @@ import Login from "./admin/Pages/Login"
 import HomeAdmin from "./admin/Pages/HomeAdmin"
 import Edit from "./admin/Pages/Edit"
 import { useSelector } from "react-redux"
+import CreateUser from "./admin/Pages/CreateUser"
+
+
+
 
 
 function App() {
@@ -28,7 +32,7 @@ function App() {
   };
   const isAdminLoggedIn = adminCheck();
   const userLog = userCheck()
-  // console.log(isAdminLoggedIn);
+  //console.log(isAdminLoggedIn);
   // console.log(userLog);
   return (
     <>
@@ -40,12 +44,16 @@ function App() {
       <Route path="/" element={<Home/>}/>
       <Route path="/sign-up" element={userLog? <Home/> :<Signup/>}/>
       <Route path="/sign-in" element={userLog? <Home/> : <Signin/>}/>
+      
+
+
       <Route element={<PrivetRoute />} >
       <Route path="/profile" element={!userLog? <Signin/> :<Profile/>}/>
       </Route>
       <Route path="/admin-login" element={isAdminLoggedIn? <HomeAdmin/>: <Login/>} />
       <Route path="/admin-home" element={isAdminLoggedIn? <HomeAdmin/> : <Login/>} />
       <Route path="/admin-edit/:id" element={isAdminLoggedIn?<Edit/> : <Login/>} />
+      <Route path="/admin-createUser" element={isAdminLoggedIn?<CreateUser/> : <Login/>} />
     </Routes>
     </BrowserRouter>
 

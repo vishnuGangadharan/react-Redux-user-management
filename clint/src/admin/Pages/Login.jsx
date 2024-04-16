@@ -7,7 +7,7 @@ import { useDispatch ,useSelector} from 'react-redux'
 function Login() {
     const dispatch = useDispatch()
     const {error} = useSelector((state)=>state.admin)
-    // console.log('qqqqqqqqqq',error);
+   
     const [formData, setFormData] = useState({})
     const navigate = useNavigate()
     const handleChange = (e)=>{
@@ -26,7 +26,7 @@ function Login() {
                 body:JSON.stringify(formData)
             })
             const data = await res.json()
-            console.log('ssssssssss',data.message);
+            // console.log('ssssssssss',data);
             if(data.success=== false){
                 console.log('failed to add');
                 dispatch(signInFailure(data))

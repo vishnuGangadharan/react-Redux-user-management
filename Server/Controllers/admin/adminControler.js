@@ -4,11 +4,11 @@ import { errorHandler } from "../../utils/error.js";
 import path from "path"
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'public/uploads'); // Save files to the public/uploads directory
+      cb(null, 'public/uploads'); 
     },
     filename: function (req, file, cb) {
           file.filename =file.fieldname + '-' + Date.now() + path.extname(file.originalname)
-      cb(null, file.filename ); // Generate unique filenames
+      cb(null, file.filename );
     }
   });
 
@@ -110,19 +110,16 @@ export const searchUser= async(req,res,next)=>{
 
    const users = await User.find({
     $or: [
-        { userName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
+        {userName: { $regex: search, $options: 'i' } },
+        {email:{$regex: search, $options: 'i' } },
     ]
 })
 console.log(users);
-
-if(!users || users.length === 0){
+if(!users||users.length === 0){
     return res.status(404).json({ error: 'No users found matching the search criteria.' });
 }
 res.status(200).json(users) 
 }
-
-
 export const signout=async( req,res,next) =>{
     res.clearCookie('access_token').status(200).json('Signout success')
  }

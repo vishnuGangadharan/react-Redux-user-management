@@ -5,7 +5,7 @@ import storage from "redux-persist/lib/storage";
 import {persistStore} from "redux-persist";
 import adminReducer from './admin/adminSlice.js'
 //persitst used to storage the data in local storage in browser
-const rootReducer = combineReducers({user : userReducer, admin:adminReducer})
+const rootReducer = combineReducers({user : userReducer, admin:adminReducer })
 
 const persistConfig = {
     key : 'root',

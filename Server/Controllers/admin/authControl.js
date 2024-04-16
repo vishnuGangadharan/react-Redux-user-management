@@ -15,7 +15,7 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(400, "password required"));
     }
     const validAdmin = await User.findOne({ email, IsAdmin: true });
-
+    console.log('2',validAdmin);
     if (!validAdmin) {
       return next(errorHandler(401, " not valid admin"));
     }
@@ -28,11 +28,13 @@ export const signin = async (req, res, next) => {
     } 
 
     const token = jwt.sign({ id: validAdmin._id }, process.env.JWT_SECRET);
+    console.log('3',validAdmin);
     const expiryDate = new Date(Date.now() + 3600000); //1hr
     res
       .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
       .status(200)
       .json(validAdmin);
+     
   } catch (error) {
     next(error);
   }
